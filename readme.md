@@ -20,21 +20,31 @@ VS Code Copilot → Ollama Proxy (port 11434) → llama.cpp Server (port 8080) �
 
 ## 📋 Prerequisites
 
-Ensure the following are installed and added to your system PATH:
+### For Running the Proxy Only
 
-### Required Software
+If you already have a llama.cpp server running (or will use an existing installation), the proxy requires **only Python** - it uses standard library modules with no external dependencies:
 
 1. **Python 3.10+**
    ```powershell
    python --version
    ```
 
+**That's it!** The proxy uses only built-in Python modules:
+- `http.server` - HTTP server and request handling
+- `urllib.request` - Forwarding requests to llama.cpp
+- `json` - Request/response serialization
+- `datetime` - Timestamp generation
+
+### For Building llama.cpp from Source (Using the .bat File)
+
+If you're using `run_qwen35_Q6_k_llama.bat` to build and set up llama.cpp from scratch, you'll also need:
+
 2. **Git**
    ```powershell
    git --version
    ```
 
-3. **CMake**
+3. **CMake** (for building llama.cpp)
    ```powershell
    cmake --version
    ```
@@ -57,9 +67,18 @@ Ensure the following are installed and added to your system PATH:
 
 ## 🚀 Quick Start
 
-### Option 1: Automated Setup with Batch Script
+### Option 1: Using an Existing llama.cpp Server
 
-The included `run_qwen35_Q6_k_llama.bat` automates the entire setup process:
+If you already have a llama.cpp server installed and running:
+
+1. **Start your llama.cpp server** on port 8080 (or your preferred port)
+2. **Proceed to the Proxy Setup section** below to launch the proxy
+
+This is the simplest setup - no build tools required, just Python!
+
+### Option 2: Automated Setup with Batch Script
+
+The included `run_qwen35_Q6_k_llama.bat` automates the complete setup process from scratch:
 
 ```powershell
 # Double-click or run from PowerShell:
@@ -69,24 +88,25 @@ The included `run_qwen35_Q6_k_llama.bat` automates the entire setup process:
 **What the script does:**
 
 1. ✅ Validates all prerequisites (Git, CMake, CUDA, Python, Visual Studio)
-2. ✅ Initializes MSVC build environment
-3. ✅ Installs `huggingface_hub` Python package
-4. ✅ Clones and builds llama.cpp with CUDA support (targeting Blackwell sm_120 architecture)
+2. ✅ Initializes MSVC build environment for compilation
+3. ✅ Installs `huggingface_hub` Python package for model downloads
+4. ✅ Clones llama.cpp repository and builds with CUDA support (targeting Blackwell sm_120 architecture)
 5. ✅ Downloads Qwen3.5-27B-Q6_K model and vision projector from Hugging Face
 6. ✅ Starts the llama.cpp server on port 8080
 
 **Server Web UI**: Once started, access the server interface at http://localhost:8080
 
-### Option 2: Manual Server Setup
-
-If you already have a llama.cpp server running:
-
-1. Ensure your server is running on `localhost:8080` (or update `LLAMA_PORT` in the proxy)
-2. Skip to the **Proxy Setup** section below
+**Note**: The batch script is ideal for first-time setup. On subsequent runs, it will skip steps that have already been completed (e.g., if llama.cpp is already built).
 
 ## 🔧 Proxy Setup
 
-The `ollama_llama_proxy.py` bridges VS Code Copilot and llama.cpp:
+The `ollama_llama_proxy.py` bridges VS Code Copilot and llama.cpp. 
+
+**No external dependencies required** - the proxy uses only Python's standard library:
+- `http.server` - HTTP server and request handling  
+- `urllib.request` - Forwarding requests to llama.cpp
+- `json` - Request/response serialization
+- `datetime` - Timestamp generation
 
 ### Starting the Proxy
 
@@ -274,12 +294,13 @@ ERROR: Git is not installed or not in your PATH.
 - Add their `bin` directories to system PATH
 - Restart terminal after installation
 
-**2. Visual Studio Build Tools Missing**
+**2. Build Tools Missing (When Using .bat File)**
 ```
 ERROR: vswhere.exe not found. Please install Visual Studio.
 ```
 - Install "Desktop development with C++" from Visual Studio Installer
 - Include MSVC tools and Windows SDK
+- Note: This only applies if building llama.cpp from source using the batch script
 
 **3. Model Download Fails**
 ```
