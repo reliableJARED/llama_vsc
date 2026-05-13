@@ -2,6 +2,11 @@
 
 A complete solution for running local AI models with VS Code Copilot on Windows with NVIDIA GPU support. This repository bridges VS Code Copilot's Ollama interface with a powerful llama.cpp server, enabling you to use high-performance local models like Qwen3.5-27B directly in your development workflow.
 
+## Which Proxy To Use
+
+- `ollama_llama_proxy.py` is intended for local use when the AI server and VS Code are on the same machine, or when both systems are on the same local network.
+- `ollama_llama_proxy_zrok.py` is intended for exposing your local model endpoint over the internet through Zrok, a secure sharing and tunneling service for publishing local services remotely.
+
 ## 🎯 What This Does
 
 This project enables **VS Code Copilot** to communicate with a local **llama.cpp** server through an Ollama-compatible proxy:
@@ -67,36 +72,35 @@ If you're using `run_qwen35_Q6_k_llama.bat` to build and set up llama.cpp from s
 
 ## 🚀 Quick Start
 
-### Option 1: Using an Existing llama.cpp Server
+### If llama.cpp is already running
 
-If you already have a llama.cpp server installed and running:
-
-1. **Start your llama.cpp server** on port 8080 (or your preferred port)
-2. **Proceed to the Proxy Setup section** below to launch the proxy
-
-This is the simplest setup - no build tools required, just Python!
-
-### Option 2: Automated Setup with Batch Script
-
-The included `run_qwen35_Q6_k_llama.bat` automates the complete setup process from scratch:
+If you already have a llama.cpp server running, just start the proxy:
 
 ```powershell
-# Double-click or run from PowerShell:
+python ollama_llama_proxy.py
+```
+
+If you leave the defaults as-is, they already match what VS Code expects for a local Ollama-compatible endpoint. In VS Code, just add a default Ollama model and use it.
+
+### If llama.cpp is not installed or not running yet
+
+Use one of the included batch files first to build or start your llama.cpp setup, then run the proxy server after that.
+
+```powershell
 .\run_qwen35_Q6_k_llama.bat
 ```
 
-**What the script does:**
+Once llama.cpp is up, start the proxy:
 
-1. ✅ Validates all prerequisites (Git, CMake, CUDA, Python, Visual Studio)
-2. ✅ Initializes MSVC build environment for compilation
-3. ✅ Installs `huggingface_hub` Python package for model downloads
-4. ✅ Clones llama.cpp repository and builds with CUDA support (targeting Blackwell sm_120 architecture)
-5. ✅ Downloads Qwen3.5-27B-Q6_K model and vision projector from Hugging Face
-6. ✅ Starts the llama.cpp server on port 8080
+```powershell
+python ollama_llama_proxy.py
+```
 
-**Server Web UI**: Once started, access the server interface at http://localhost:8080
+### If you want remote access over the internet
 
-**Note**: The batch script is ideal for first-time setup. On subsequent runs, it will skip steps that have already been completed (e.g., if llama.cpp is already built).
+`ollama_llama_proxy_zrok.py` is the same basic idea, but it is meant for exposing the machine running llama.cpp through a secure Zrok tunnel so you can access it remotely.
+
+When you use the zrok version, point VS Code to the URL shown in the terminal instead of the default local Ollama URL. Other than using that remote URL, the setup is the same.
 
 ## 🔧 Proxy Setup
 
@@ -348,7 +352,13 @@ This solution supports multiple API standards:
 - [VS Code Copilot BYOM Documentation](https://learn.microsoft.com/en-us/visualstudio/ide/copilot-select-add-models?view=visualstudio#bring-your-own-model-byom)
 - [Ollama API Documentation](https://github.com/ollama/ollama/blob/main/docs/api.md)
 
-## 🔄 Workflow Summary
+## � Zrok Integration
+
+For secure remote access to your local model setup, you can use **Zrok** to expose your services:
+
+- [Getting Started with Zrok](https://netfoundry.io/docs/zrok/intro) - Learn how to install and configure Zrok for secure tunneling
+
+## �🔄 Workflow Summary
 
 1. **Setup**: Run `run_qwen35_Q6_k_llama.bat` to build and download model
 2. **Start Server**: The script launches llama.cpp server (or start manually)

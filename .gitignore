@@ -1,0 +1,29 @@
+#zrok directory
+zrok_2.0.3_windows_amd64/
+
+# Zrok distribution files
+zrok2.exe
+
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
